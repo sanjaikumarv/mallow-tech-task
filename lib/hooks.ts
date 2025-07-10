@@ -5,16 +5,23 @@ import axios from "axios";
 export async function makeApiCall<D>(url: string, method = "GET", data?: D) {
     const headers = {
         "Content-Type": "application/json",
-        "x-api-key": "reqres-free-v1", // Replace with your actual API key if needed
+        "x-api-key": "reqres-free-v1",
     }
     try {
-        const response = await axios({
-            url: `https://reqres.in/api${url}`,
-            method,
-            headers,
-            data,
-        })
-        console.log(`API Call: ${method} ${url}`, response.data.token);
+        let response;
+        if (method === 'DELETE') {
+            response = await axios({
+                url: `https://reqres.in/api${url}`,
+                method,
+                headers,
+            })
+        } else
+            response = await axios({
+                url: `https://reqres.in/api${url}`,
+                method,
+                headers,
+                data,
+            })
         switch (method) {
             case 'POST':
                 return {

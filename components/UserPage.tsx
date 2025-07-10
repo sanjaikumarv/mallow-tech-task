@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo, memo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
-import { Search, Grid, List, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, Grid, List, ChevronLeft, ChevronRight, Trash2, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -30,7 +30,7 @@ export default function UserPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<UserType | null>(null)
   const [deletingUser, setDeletingUser] = useState<UserType | null>(null)
-
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const usersPerPage = 5
 
   const filteredUsers = useMemo(() => {
@@ -126,14 +126,12 @@ export default function UserPage() {
           </Button>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
             <p className="text-red-600">Error: {error}</p>
           </div>
         )}
 
-        {/* Table View */}
         {viewMode === "table" && (
           <div className="bg-white rounded-lg shadow-sm border">
             <div className="overflow-x-auto">
@@ -196,43 +194,63 @@ export default function UserPage() {
           </div>
         )}
 
-        {/* Card View (keeping original for when toggled) */}
         {viewMode === "card" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedUsers.map((user) => (
-              <div key={user.id} className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center space-x-4 mb-4">
-                  <Avatar className="h-16 w-16">
+              <div
+                key={user.id}
+                className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-all duration-200 relative group"
+                onMouseEnter={() => setHoveredCard(user.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                {/* Action buttons overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 rounded-lg">
+                  <div
+                    className={`absolute inset-0 z-50 items-center justify-center flex space-x-2 transition-opacity duration-200 ${hoveredCard === user.id ? "opacity-100" : "opacity-0"
+                      }`}
+                  >
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="h-10 w-10 rounded-full p-0 bg-blue-500 hover:bg-blue-600 text-white"
+                      onClick={() => {
+                        setEditingUser(user)
+                      }}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="h-10 w-10 rounded-full p-0"
+                      onClick={() => setDeletingUser(user)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Card content */}
+                <div className="flex flex-col items-center text-center">
+                  <Avatar className="h-20 w-20 mb-4">
                     <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.first_name} ${user.last_name}`} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-lg">
                       {user.first_name[0]}
                       {user.last_name[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      {user.first_name} {user.last_name}
-                    </h3>
-                    <p className="text-gray-600">{user.email}</p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => () => {
-                    setEditingUser(user)
-                    setIsModalOpen(true)
-                  }} className="flex-1">
-                    Edit
-                  </Button>
-                  <Button variant="destructive" size="sm" onClick={() => setDeletingUser(user)} className="flex-1">
-                    Delete
-                  </Button>
+
+                  <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                    {user.first_name} {user.last_name}
+                  </h3>
+
+                  <p className="text-gray-500 text-sm">{user.email}</p>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-end items-center space-x-2 mt-6">
             <Button
@@ -267,7 +285,6 @@ export default function UserPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {paginatedUsers.length === 0 && (
           <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No users found</h3>
@@ -278,7 +295,6 @@ export default function UserPage() {
         )}
       </div>
 
-      {/* Modals */}
       <UserModal
         isOpen={isModalOpen}
         onClose={() => {

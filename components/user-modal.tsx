@@ -120,10 +120,51 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
               </AvatarFallback>
             </Avatar>
           </div>
-
-          {/* Avatar URL */}
           <div className="space-y-2">
-            <Label htmlFor="avatar">Avatar URL</Label>
+            <Label htmlFor="first_name">First Name *</Label>
+            <div>
+              <Input
+                id="first_name"
+                placeholder="Enter first name"
+                value={formData.first_name}
+                onChange={(e) => handleInputChange("first_name", e.target.value)}
+                className={`${errors.first_name ? "border-red-500" : ""}`}
+              />
+            </div>
+            {errors.first_name && <p className="text-sm text-red-500">{errors.first_name}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="last_name">Last Name *</Label>
+            <div className="relative">
+              <Input
+                id="last_name"
+                placeholder="Enter last name"
+                value={formData.last_name}
+                onChange={(e) => handleInputChange("last_name", e.target.value)}
+                className={`${errors.last_name ? "border-red-500" : ""}`}
+              />
+            </div>
+            {errors.last_name && <p className="text-sm text-red-500">{errors.last_name}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email *</Label>
+            <div className="relative">
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter email address"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                className={`${errors.email ? "border-red-500" : ""}`}
+              />
+            </div>
+            {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="avatar">Profile image link</Label>
             <Input
               id="avatar"
               type="url"
@@ -132,57 +173,6 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
               onChange={(e) => handleInputChange("avatar", e.target.value)}
             />
           </div>
-
-          {/* First Name */}
-          <div className="space-y-2">
-            <Label htmlFor="first_name">First Name *</Label>
-            <div className="relative">
-              <UserIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                id="first_name"
-                placeholder="Enter first name"
-                value={formData.first_name}
-                onChange={(e) => handleInputChange("first_name", e.target.value)}
-                className={`pl-10 ${errors.first_name ? "border-red-500" : ""}`}
-              />
-            </div>
-            {errors.first_name && <p className="text-sm text-red-500">{errors.first_name}</p>}
-          </div>
-
-          {/* Last Name */}
-          <div className="space-y-2">
-            <Label htmlFor="last_name">Last Name *</Label>
-            <div className="relative">
-              <UserIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                id="last_name"
-                placeholder="Enter last name"
-                value={formData.last_name}
-                onChange={(e) => handleInputChange("last_name", e.target.value)}
-                className={`pl-10 ${errors.last_name ? "border-red-500" : ""}`}
-              />
-            </div>
-            {errors.last_name && <p className="text-sm text-red-500">{errors.last_name}</p>}
-          </div>
-
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter email address"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
-              />
-            </div>
-            {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
-          </div>
-
-          {/* Actions */}
           <div className="flex space-x-3 pt-4">
             <Button
               type="button"
@@ -193,17 +183,13 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1" disabled={loading}>
+            <Button type="submit" className="flex-1 bg-blue-500 text-white" disabled={loading}>
               {loading ? (
                 <div className="flex items-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>{user ? "Updating..." : "Creating..."}</span>
+                  <span>{user ? "Loading..." : "Loading..."}</span>
                 </div>
-              ) : user ? (
-                "Update User"
-              ) : (
-                "Create User"
-              )}
+              ) : "Submit"}
             </Button>
           </div>
         </form>
